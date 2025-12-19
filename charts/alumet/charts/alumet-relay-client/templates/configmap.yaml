@@ -1,5 +1,4 @@
 {{- if not .Values.configMap.name }}
-
 apiVersion: v1
 kind: ConfigMap
 metadata:

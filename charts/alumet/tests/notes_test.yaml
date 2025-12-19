@@ -1,0 +1,17 @@
+suite: test global notes
+
+release:
+  name: unittest
+
+tests:
+  - it: should not contain any influxdb info if not deployed nor used
+    set:
+      influxdb2:
+        enabled: false
+      alumet-relay-server:
+        plugins:
+          influxdb:
+            enable: false
+    asserts:
+      - notMatchRegexRaw:
+          pattern: .*influx.*

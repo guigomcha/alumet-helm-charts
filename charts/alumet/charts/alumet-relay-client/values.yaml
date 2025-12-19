@@ -5,8 +5,8 @@
 replicaCount: 1
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+nameOverride: ''
+fullnameOverride: ''
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -17,22 +17,23 @@ serviceAccount:
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: ''
 
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
 securityContext:
-  capabilities: "SYS_ADMIN,SYS_NICE,PERFMON"
-  
+  capabilities: 'SYS_ADMIN,SYS_NICE,PERFMON'
 
 ingress:
   enabled: false
-  className: ""
-  annotations: {}
+  className: ''
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -83,45 +84,46 @@ image:
   # version: 0.8.3-1
   # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
   osVersion: ubuntu_24.04
+  registry:
 
 # set environment variables for log and trace level
 env:
-  RUST_LOG: "info"
-  RUST_BACKTRACE: ""
+  RUST_LOG: 'info'
+  RUST_BACKTRACE: ''
 
-# set alumet-relay-client argument parameter  
-cmd:  
-  Arg1: ""
+# set alumet-relay-client argument parameter
+cmd:
+  Arg1: ''
 
-# by default the config map is created at deployment step, 
+# by default the config map is created at deployment step,
 # but you can create your own config map to have a complete custom configuration, in that case you need to declare the config map name
-configMap: 
-  name: ""
-  
+configMap:
+  name: ''
+
 # set enable variable to true/false to activate/unactivate Alumuet plugins
 plugins:
   csv:
     enable: false
   aggregation:
     enable: false
-    metrics: "cpu_time_delta"
+    metrics: 'cpu_time_delta'
   energyAttribution:
     enable: false
-    metrics: "cpu_time_delta"
+    metrics: 'cpu_time_delta'
     filter:
-      kind: "total"
+      kind: 'total'
   EnergyEstimationTdp:
     enable: false
     poll_interval: 1s
     tdp: 100
     nb_vcpu: 1
     nb_cpu: 1
-    cpu_usage_per_pod: "cpu_time_delta"
+    cpu_usage_per_pod: 'cpu_time_delta'
   jetson:
     enable: false
   k8s:
     enable: true
-    kubepods_path: "/sys/fs/cgroup/kubepods.slice/"
+    kubepods_path: '/sys/fs/cgroup/kubepods.slice/'
     poll_interval: 1s
   nvml:
     enable: false
@@ -132,7 +134,7 @@ plugins:
   perf:
     enable: false
   procfs:
-    enable: false      
+    enable: false
   rapl:
     enable: false
     poll_interval: 1s
@@ -147,7 +149,7 @@ plugins:
     enable: false
   opentelemetry:
     enable: false
-    collector_host: "http://localhost:4317"
+    collector_host: 'http://localhost:4317'
     push_interval_seconds: 5
   prometheusExporter:
     enable: false

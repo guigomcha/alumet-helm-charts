@@ -1,0 +1,20 @@
+alumet-relay-server:
+  enabled: true
+  plugins:
+    influxdb:
+      enable: true
+
+alumet-relay-client:
+  enabled: true
+  plugins:
+    procfs:
+      enable: true
+    k8s:
+      enable: false
+
+influxdb2:
+  enabled: true
+
+global:
+  image:
+    registry: ghcr.io/alumet-dev

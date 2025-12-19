@@ -1,0 +1,62 @@
+suite: test server service
+
+templates:
+  - templates/service.yaml
+
+set:
+  global:
+    image:
+      registry:
+
+release:
+  name: unittest
+
+tests:
+  - it: should create a cluster IP service by default
+    asserts:
+      - hasDocuments:
+          count: 1
+      - equal:
+          path: metadata.name
+          value: unittest-alumet-relay-server
+      - equal:
+          path: spec.selector.app
+          value: alumet-relay-server
+      - equal:
+          path: spec.type
+          value: ClusterIP
+  - it: should have one port exposed by default
+    set:
+      service:
+        port: 80
+    asserts:
+      - lengthEqual:
+          path: spec.ports
+          count: 1
+      - contains:
+          path: spec.ports
+          content:
+            name: relay
+            port: 80
+  - it: should have two ports exposed with prometheus enabled
+    set:
+      service:
+        port: 80
+      plugins:
+        prometheusExporter:
+          enable: true
+          port: 3630
+    asserts:
+      - lengthEqual:
+          path: spec.ports
+          count: 2
+      - contains:
+          path: spec.ports
+          content:
+            name: relay
+            port: 80
+      - contains:
+          path: spec.ports
+          content:
+            name: exporter
+            port: 3630

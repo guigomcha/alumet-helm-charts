@@ -1,3 +1,4 @@
+{{- $global := (.Values.global | default .Values) -}}
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -40,7 +41,7 @@ spec:
 
       containers:
         - name: alumet-relay-client
-          image: {{ .Values.global.image.registry }}/alumet-agent:{{ .Values.image.version | default .Chart.AppVersion }}_{{ .Values.image.osVersion }}
+          image: {{ $global.image.registry }}/alumet-agent:{{ .Values.image.version | default .Chart.AppVersion }}_{{ .Values.image.osVersion }}
           args: ["--config", "/etc/alumet/alumet-agent.toml"]          
           imagePullPolicy: IfNotPresent
           resources:
@@ -88,7 +89,7 @@ spec:
             name: {{ template "alumet-relay-client.fullname" . }}-config            
           {{- end }}            
       
-      {{- if .Values.global.secret }}
+      {{- if $global.secret }}
       imagePullSecrets:
-        - name: {{ .Values.global.secret }}
+        - name: {{ $global.secret }}
       {{- end }}

@@ -1,0 +1,31 @@
+suite: test server deployment
+
+templates:
+  - templates/deployment.yaml
+
+set:
+  global:
+    image:
+      registry:
+
+release:
+  name: unittest
+
+tests:
+  - it: should not use the init-container wait-for-influx if influx isn't used
+    set:
+      plugins:
+        influxdb:
+          enable: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.initContainers
+  - it: should not use the init-container wait-for-influx if influx is external
+    set:
+      plugins:
+        influxdb:
+          enable: true
+          host: a.b.c.d
+    asserts:
+      - notExists:
+          path: spec.template.spec.initContainers
