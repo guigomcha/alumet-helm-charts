@@ -21,19 +21,19 @@ Your instance name is:  {{ .Release.Name }}
                 admin token to get access to influx db is: {{ printf "%s" $token | b64dec | quote }}
 
             {{- else }}        
-                alumet-relay-server and influxdb are not corectly set, there are not using the same secret name.
+                alumet-relay-server and influxdb are not correctly set, there are not using the same secret name.
                 check helm variables: 
                     alumet-relay-server.plugins.influxdb.existingSecret
                     influxdb2.existingSecret
             {{- end }}
         {{- else }}
             No secret name is defined for alumet-relay-server.
-            Please chek the variable alumet-relay-server.plugins.influxdb.existingSecret
+            Please check the variable alumet-relay-server.plugins.influxdb.existingSecret
         {{- end }} 
     {{- else }}
         {{ if $relayServerTable.plugins.influxdb.existingSecret }}    
             alumet-relay-server secret name is: {{ $relayServerTable.plugins.influxdb.existingSecret }}
-            alumet-relay-server and influxdb are not corectly set, there are not using the same secret name.
+            alumet-relay-server and influxdb are not correctly set, there are not using the same secret name.
                 check helm variables: 
                     alumet-relay-server.plugins.influxdb.existingSecret
                     influxdb2.existingSecret

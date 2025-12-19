@@ -2,11 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
 securityContext:
-  capabilities: "SYS_NICE,PERFMON"
+  capabilities: 'SYS_NICE,PERFMON'
   #   drop:
   #   - ALL
   # readOnlyRootFilesystem: true
@@ -52,9 +53,8 @@ tolerations: []
 # nodeSelector.nodeLabelName: "kubernetes.io/role"
 # nodeSelector.nodeLabelValue: "master"
 nodeSelector:
-  nodeLabelName: ""
-  nodeLabelValue: ""
-
+  nodeLabelName: ''
+  nodeLabelValue: ''
 
 service:
   type: ClusterIP
@@ -66,33 +66,33 @@ image:
   # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
   osVersion: ubuntu_24.04
 
-# set environment variables for log and trace level  
+# set environment variables for log and trace level
 env:
-  RUST_LOG: "info"
-  RUST_BACKTRACE: ""
-  
-cmd:  
-  Arg1: ""
+  RUST_LOG: 'info'
+  RUST_BACKTRACE: ''
 
-# by default the config map is created at deployment step, 
+cmd:
+  Arg1: ''
+
+# by default the config map is created at deployment step,
 # but you can create your own config map to have a complete custom configuration, in that case you need to declare the config map name
-configMap: 
-  name: ""
+configMap:
+  name: ''
 
 # set enable variable to true/false to activate/unactivate Alumuet plugins
 plugins:
   influxdb:
     enable: true
-    # if host is empty, it means that influxdb is deployed by the alumet helm chart 
+    # if host is empty, it means that influxdb is deployed by the alumet helm chart
     # if not it means that we use an external influxdb instance,
     # format must be: http:<server name>:<port number>
     host:
-    organization: "influxdata"
-    bucket: "default"
-    attributes_as: "tag"
+    organization: 'influxdata'
+    bucket: 'default'
+    attributes_as: 'tag'
     # token is set using key admin-token defined in the secret that is required.
     # The secret name is defined in existingSecret variable
-    existingSecret: ""
+    existingSecret: ''
 
   csv:
     enable: false
@@ -102,18 +102,15 @@ plugins:
     host: mongo
     port: 2707
     database: seed
-    collection: ""
-    username: ""
-    password: ""
-    
+    collection: ''
+    username: ''
+    password: ''
+
   opentelemetry:
     enable: false
-    collector_host: "http://localhost:4317"
+    collector_host: 'http://localhost:4317'
     push_interval_seconds: 5
 
   prometheusExporter:
     enable: false
     port: 9091
-  
-  
-  
