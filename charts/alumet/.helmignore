@@ -23,3 +23,5 @@
 .vscode/
 # Helm unittest files
 tests/
+# Chart testing values
+ci/
