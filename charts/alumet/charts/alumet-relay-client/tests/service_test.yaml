@@ -1,0 +1,47 @@
+suite: test client service
+
+templates:
+  - templates/service.yaml
+
+set:
+  global:
+    image:
+      registry:
+
+release:
+  name: unittest
+
+tests:
+  - it: should create a cluster IP service
+    set:
+      plugins:
+        prometheusExporter:
+          enable: true
+          port: 38000
+    asserts:
+      - equal:
+          path: metadata.name
+          value: unittest-alumet-relay-client
+      - equal:
+          path: spec.selector.app
+          value: alumet-relay-client
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - lengthEqual:
+          path: spec.ports
+          count: 1
+      - contains:
+          path: spec.ports
+          content:
+            name: exporter
+            port: 38000
+  - it: should not create any service
+    set:
+      plugins:
+        prometheusExporter:
+          enable: false
+    template: templates/service.yaml
+    asserts:
+      - hasDocuments:
+          count: 0
