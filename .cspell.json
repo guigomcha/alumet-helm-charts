@@ -1,0 +1,62 @@
+{
+  "useGitignore": true,
+  "language": "en",
+  "caseSensitive": false,
+  "enableGlobDot": true,
+  "ignorePaths": [
+    ".git",
+    ".cspell.json",
+    ".helmignore",
+    ".github/workflows"
+  ],
+  "languageSettings": [
+    {
+      "languageId": "markdown",
+      "ignoreRegExpList": [
+        "/^\\s*```[\\s\\S]*?^\\s*```/gm"
+      ]
+    },
+    {
+      "languageId": "toml",
+      "includeRegExpList": [
+        "#.*"
+      ]
+    },
+    {
+      "languageId": "yaml",
+      "includeRegExpList": [
+        "#.*",
+        "{{(- )?/\\*.*\\*/( -)?}}"
+      ]
+    },
+    {
+      "languageId": "tpl",
+      "includeRegExpList": [
+        "#.*",
+        "{{(- )?/\\*.*\\*/( -)?}}"
+      ]
+    }
+  ],
+  "import": [
+    "@cspell/dict-golang/cspell-ext.json"
+  ],
+  "dictionaryDefinitions": [
+    {
+      "name": "project-words",
+      "path": ".cspell/project-words.txt",
+      "description": "Words used in this project",
+      "addWords": true
+    }
+  ],
+  "dictionaries": [
+    "project-words",
+    "en-gb"
+  ],
+  "patterns": [],
+  "overrides": [
+    {
+      "languageId": "tpl",
+      "filename": "*.tpl"
+    }
+  ]
+}
