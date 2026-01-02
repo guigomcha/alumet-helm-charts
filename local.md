@@ -48,8 +48,7 @@ a new k8s cluster using `kind`, to do so, run:
 kind create cluster --config .github/.kind-config.yaml
 ```
 
-If you need a more advanced configuration for your cluster, [here](https://kind.sigs.k8s.io/docs/user/configuration/)
-is the documentation from kind.
+If you need a more advanced configuration for your cluster, check [the documentation from kind](https://kind.sigs.k8s.io/docs/user/configuration/).
 
 You should now be able to run the tests with:
 
