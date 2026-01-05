@@ -1,0 +1,83 @@
+suite: test daemonset
+
+templates:
+  - templates/daemonset.yaml
+
+release:
+  name: unittest
+
+chart:
+  appVersion: 1.2.3
+  version: 2.6.12
+
+tests:
+  - it: shouldn't have prometheus specific fields if not enabled
+    set:
+      plugins:
+        prometheusExporter:
+          port: 4567
+    asserts:
+      - notExists:
+          path: spec.template.metadata["prometheus.io/scrape"]
+      - isNotSubset:
+          path: spec.template.spec.containers[0].ports
+          content:
+            - containerPort: 4567
+              name: 'exporter'
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: alumet-relay-client
+  - it: should have the recommended labels
+    asserts:
+      - isSubset:
+          path: spec.template.metadata
+          content:
+            labels:
+              app.kubernetes.io/instance: unittest
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: alumet-relay-client
+              app.kubernetes.io/version: 1.2.3
+              helm.sh/chart: alumet-relay-client-2.6.12
+  - it: shouldn't have any toleration by default
+    asserts:
+      - lengthEqual:
+          path: spec.template.spec.tolerations
+          count: 0
+  - it: should use the service account created by the chart
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: unittest-alumet-reader
+  - it: shouldn't wait for the relay client if not enabled
+    set:
+      plugins:
+        relay_client:
+          enable: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.initContainers
+  - it: shouldn't use image pull secret if not defined
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+  - it: should use global values in priority
+    set:
+      global:
+        secret: abc
+        image:
+          registry: registry.com
+      secret: 123
+      image:
+        registry: registry.net
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: abc
+      - notContains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: 123
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.com/alumet-agent:1.2.3_ubuntu_24.04
