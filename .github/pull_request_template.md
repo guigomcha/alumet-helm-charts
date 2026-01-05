@@ -1,3 +1,4 @@
+<!-- markdownlint-disable -->
 # Description
 
 # PR check

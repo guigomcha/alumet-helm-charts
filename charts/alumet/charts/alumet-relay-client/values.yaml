@@ -64,7 +64,7 @@ autoscaling:
 volumes: []
 # - name: foo
 #   secret:
-#     secretName: mysecret
+#     secretName: my-secret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
@@ -100,7 +100,7 @@ cmd:
 configMap:
   name: ''
 
-# set enable variable to true/false to activate/unactivate Alumuet plugins
+# set enable variable to true/false to activate/deactivate Alumet plugins
 plugins:
   csv:
     enable: false

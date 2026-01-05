@@ -10,7 +10,7 @@ The agent is deployed alongside InfluxDB.
 The chart contains the following subcharts:
 
 - `influxdb`: deploys InfluxDB to store the measurements (one pod and one service)
-- `alumet-relay-client`: deploys a monitoring agent on each node (one pod per node with a daemonset)
+- `alumet-relay-client`: deploys a monitoring agent on each node (one pod per node with a daemonSet)
 - `alumet-relay-server`: deploys one server that gathers the measurements produced by the clients (one pod and one load balancer service)
 
 Each subcharts has its own `values.yaml` file.
@@ -82,7 +82,7 @@ To use the helm chart directly from its source, see [Testing the Helm Chart Loca
 
 To use private images published to the GitHub Container Registry (GHCR), you need to:
 
-1. Create a token that can acces your private registry.
+1. Create a token that can access your private registry.
 2. Create a secret `kubectl`:
 
 ```sh
@@ -120,11 +120,11 @@ The secret's name is defined by this variable, it is not set by default.
 Two backends are available:
 
 - InfluxDb (preferred and default option)
-- Prometheus (the pod is annotatated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically by the exporter)
+- Prometheus (the pod is annotated with `prometheus.io/scrape: 'true'` so that it can be scrapped automatically by the exporter)
 
 ## ALUMET relay server
 
-It receives the metrics by all ALUMET relay client and writes the metrics in the ouput plugin configured (CSV file, influxdb, mongodb, as a prometheus exporter or opentelemetry).
+It receives the metrics by all ALUMET relay client and writes the metrics in the output plugin configured (CSV file, influxdb, mongodb, as a prometheus exporter or opentelemetry).
 The default configuration is correctly set-up to write in influxdb. The default value of helm variables related to alumet plugins are:
 
 - alumet-relay-server.plugins.influxdb.enable="true"
@@ -275,4 +275,4 @@ If the secret does not exist at the time of the deployment, it is automatically 
 
 ### HTTP Service
 
-By default the http service is not actived, if needed, the variable `influxdb2.service.type` must be set to `LoadBalancer`.
+By default the http service is not activated, if needed, the variable `influxdb2.service.type` must be set to `LoadBalancer`.
