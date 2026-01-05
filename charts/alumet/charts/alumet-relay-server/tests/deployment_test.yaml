@@ -8,6 +8,10 @@ set:
     image:
       registry:
 
+chart:
+  appVersion: 1.2.3
+  version: 2.6.12
+
 release:
   name: unittest
 
@@ -29,3 +33,45 @@ tests:
     asserts:
       - notExists:
           path: spec.template.spec.initContainers
+  - it: shouldn't have prometheus specific fields if not enabled
+    set:
+      plugins:
+        prometheusExporter:
+          port: 4567
+    asserts:
+      - notExists:
+          path: spec.template.metadata["prometheus.io/scrape"]
+      - notContains:
+          path: spec.template.spec.containers[0].ports
+          content:
+            - containerPort: 4567
+              name: 'exporter'
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: alumet-relay-server
+  - it: shouldn't have any toleration by default
+    asserts:
+      - lengthEqual:
+          path: spec.template.spec.tolerations
+          count: 0
+  - it: should use global values in priority
+    set:
+      global:
+        secret: abc
+        image:
+          registry: registry.com
+      secret: 123
+      image:
+        registry: registry.net
+    asserts:
+      - contains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: abc
+      - notContains:
+          path: spec.template.spec.imagePullSecrets
+          content:
+            name: 123
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: registry.com/alumet-agent:1.2.3_ubuntu_24.04
