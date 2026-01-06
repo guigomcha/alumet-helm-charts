@@ -1,60 +1,24 @@
-# Default values for alumet-relay-server.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-podSecurityContext:
-  {}
-  # fsGroup: 2000
+nameOverride: ''
+fullnameOverride: ''
 
 securityContext:
-  capabilities: 'SYS_NICE,PERFMON'
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-ingress:
-  enabled: false
+  capabilities:
+    add:
+      - SYS_NICE
+      - PERFMON
 
 resources:
-  cpu: 500m
-  memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 128Mi
+  # You can also add some requests if you want, here is an example.
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: my-secret
-#     optional: false
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
-
 tolerations: []
 
-# if you want to deploy the alumet-relay-server on a specific node, you need to set the 2 below variables:
-# - nodeSelector.nodeLabelName
-# - nodeSelector.nodeLabelValue
-# For example if you want to specify a node using its role name and deploy on master node:
-# nodeSelector.nodeLabelName: "kubernetes.io/role"
-# nodeSelector.nodeLabelValue: "master"
-nodeSelector:
-  nodeLabelName: ''
-  nodeLabelValue: ''
+nodeSelector: {}
 
 service:
   type: ClusterIP
@@ -70,9 +34,6 @@ image:
 env:
   RUST_LOG: 'info'
   RUST_BACKTRACE: ''
-
-cmd:
-  Arg1: ''
 
 # by default the config map is created at deployment step,
 # but you can create your own config map to have a complete custom configuration, in that case you need to declare the config map name

@@ -39,9 +39,7 @@ spec:
           args: ["--config", "/etc/alumet/alumet-agent.toml"]
           imagePullPolicy: IfNotPresent
           resources:
-            limits:
-              memory: "{{ .Values.resources.memory }}"
-              cpu: "{{ .Values.resources.cpu }}"
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /etc/alumet/alumet-agent.toml
@@ -73,8 +71,7 @@ spec:
               name: "exporter"
             {{ end }}
           securityContext:
-            capabilities:
-              add: [{{ .Values.securityContext.capabilities }}]
+            {{- toYaml .Values.securityContext | nindent 12 }}
       volumes:
         - name: config
           configMap:
@@ -89,10 +86,6 @@ spec:
         - name: {{ $global.secret }}
       {{- end }}
       tolerations:
-      {{- with .Values.tolerations }}
-        {{ toYaml . | nindent 8 | trim }}
-      {{- end }}
-      {{- if .Values.nodeSelector.nodeLabelValue }} 
+        {{ toYaml .Values.tolerations | nindent 8 }}
       nodeSelector:
-        {{ .Values.nodeSelector.nodeLabelName }}: {{ .Values.nodeSelector.nodeLabelValue }}
-      {{- end }}
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
