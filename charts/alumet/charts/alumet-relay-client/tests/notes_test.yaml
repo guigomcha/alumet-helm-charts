@@ -1,0 +1,23 @@
+suite: test install notes
+
+release:
+  name: unittest
+
+templates:
+  - templates/NOTES.txt
+
+chart:
+  version: 1.0.0
+
+tests:
+  - it: should equals to the raw minimal notes we currently have
+    set:
+      service:
+        port: 48125
+    asserts:
+      - equalRaw:
+          value: |
+            Installing alumet-relay-client
+            Your installed version  1.0.0
+            Your instance name is:  unittest
+            alumet-relay client is deployed

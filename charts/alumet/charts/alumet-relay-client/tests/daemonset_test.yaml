@@ -1,38 +1,16 @@
-suite: test server deployment
+suite: test daemonset
 
 templates:
-  - templates/deployment.yaml
+  - templates/daemonset.yaml
 
-set:
-  global:
-    image:
-      registry:
+release:
+  name: unittest
 
 chart:
   appVersion: 1.2.3
   version: 2.6.12
 
-release:
-  name: unittest
-
 tests:
-  - it: should not use the init-container wait-for-influx if influx isn't used
-    set:
-      plugins:
-        influxdb:
-          enable: false
-    asserts:
-      - notExists:
-          path: spec.template.spec.initContainers
-  - it: should not use the init-container wait-for-influx if influx is external
-    set:
-      plugins:
-        influxdb:
-          enable: true
-          host: a.b.c.d
-    asserts:
-      - notExists:
-          path: spec.template.spec.initContainers
   - it: shouldn't have prometheus specific fields if not enabled
     set:
       plugins:
@@ -41,19 +19,47 @@ tests:
     asserts:
       - notExists:
           path: spec.template.metadata["prometheus.io/scrape"]
-      - notContains:
+      - isNotSubset:
           path: spec.template.spec.containers[0].ports
           content:
             - containerPort: 4567
               name: 'exporter'
       - equal:
           path: spec.template.spec.containers[0].name
-          value: alumet-relay-server
+          value: alumet-relay-client
+  - it: should have the recommended labels
+    asserts:
+      - isSubset:
+          path: spec.template.metadata
+          content:
+            labels:
+              app.kubernetes.io/instance: unittest
+              app.kubernetes.io/managed-by: Helm
+              app.kubernetes.io/name: alumet-relay-client
+              app.kubernetes.io/version: 1.2.3
+              helm.sh/chart: alumet-relay-client-2.6.12
   - it: shouldn't have any toleration by default
     asserts:
       - lengthEqual:
           path: spec.template.spec.tolerations
           count: 0
+  - it: should use the service account created by the chart
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: unittest-alumet-reader
+  - it: shouldn't wait for the relay client if not enabled
+    set:
+      plugins:
+        relay_client:
+          enable: false
+    asserts:
+      - notExists:
+          path: spec.template.spec.initContainers
+  - it: shouldn't use image pull secret if not defined
+    asserts:
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
   - it: should use global values in priority
     set:
       global:

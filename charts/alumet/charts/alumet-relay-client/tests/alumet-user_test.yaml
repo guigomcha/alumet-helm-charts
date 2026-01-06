@@ -1,0 +1,68 @@
+suite: test alumet user
+
+templates:
+  - templates/alumet-user.yaml
+
+set:
+  global:
+    image:
+      registry:
+
+release:
+  name: unittest
+  namespace: test
+
+tests:
+  - it: should create a service account
+    documentIndex: 1
+    asserts:
+      - equal:
+          path: metadata.name
+          value: unittest-alumet-reader
+  - it: should create a cluster role with the right permissions
+    documentIndex: 0
+    asserts:
+      - equal:
+          path: metadata.name
+          value: unittest-alumet_cluster_role
+      - lengthEqual:
+          path: rules
+          count: 1
+      - contains:
+          path: rules
+          content:
+            apiGroups:
+              - ''
+            resources:
+              - pods
+              - pods/logs
+              - pods/status
+              - nodes
+              - namespaces
+            verbs:
+              - get
+              - list
+              - watch
+  - it: should associate the clurerole with the service account
+    documentIndex: 2
+    asserts:
+      - isKind:
+          of: ClusterRoleBinding
+      - equal:
+          path: metadata.name
+          value: unittest-alumet_cluster_role_binding
+      - isSubset:
+          path: roleRef
+          content:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: unittest-alumet_cluster_role
+      - lengthEqual:
+          path: subjects
+          count: 1
+      - contains:
+          path: subjects
+          content:
+            kind: ServiceAccount
+            name: unittest-alumet-reader
+            namespace: test
