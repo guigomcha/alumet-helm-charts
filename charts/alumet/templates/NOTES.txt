@@ -7,17 +7,17 @@ Your instance name is:  {{ .Release.Name }}
 {{- if $relayServerTable.plugins.influxdb.enable }} 
     influxdb plugin is enabled, a secret to get access to influxdb database must be defined
 
-    {{ if .Values.influxdb2.adminUser.existingSecret }}
-        influxdb secret name is: {{ .Values.influxdb2.adminUser.existingSecret }}
+    {{ if .Values.influxdb2.existingSecret }}
+        influxdb secret name is: {{ .Values.influxdb2.existingSecret }}
 
         {{ if $relayServerTable.plugins.influxdb.existingSecret }}
             for alumet-relay-server, influxdb secret name is: {{ $relayServerTable.plugins.influxdb.existingSecret }}
             
-            {{ if eq $relayServerTable.plugins.influxdb.existingSecret .Values.influxdb2.adminUser.existingSecret }}
+            {{ if eq $relayServerTable.plugins.influxdb.existingSecret .Values.influxdb2.existingSecret }}
                 alumet-relay-server and influxdb are correctly set, there are using the same secret name
-                {{ $passwd := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.adminUser.existingSecret ).data "admin-password" }}
+                {{ $passwd := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.existingSecret ).data "admin-password" }}
                 admin password to get access to influx db is: {{ printf "%s" $passwd | b64dec | quote }}
-                {{ $token := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.adminUser.existingSecret ).data "admin-token" }}
+                {{ $token := index (lookup "v1" "Secret" .Release.Namespace .Values.influxdb2.existingSecret ).data "admin-token" }}
                 admin token to get access to influx db is: {{ printf "%s" $token | b64dec | quote }}
 
             {{- else }}        
