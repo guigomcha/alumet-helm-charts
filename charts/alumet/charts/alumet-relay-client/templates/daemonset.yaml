@@ -20,9 +20,7 @@ spec:
         # for RAPL plugin we need to be root 
         runAsUser: 0
       tolerations:
-      {{- with .Values.tolerations }}
-        {{ toYaml . | nindent 8 | trim }}
-      {{- end }}          
+        {{ toYaml .Values.tolerations | nindent 8 }}
 
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
@@ -45,10 +43,7 @@ spec:
           args: ["--config", "/etc/alumet/alumet-agent.toml"]          
           imagePullPolicy: IfNotPresent
           resources:
-            limits:
-              memory: "{{ .Values.resources.memory }}"
-              cpu: "{{ .Values.resources.cpu }}"
-              #nvidia.com/gpu: 1
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: sysfs
               mountPath: /sys
@@ -71,8 +66,7 @@ spec:
               value: "{{ .Values.env.RUST_BACKTRACE }}"
 
           securityContext:
-            capabilities:
-              add: [{{ .Values.securityContext.capabilities }}]
+            {{- toYaml .Values.securityContext | nindent 12 }}
 
       volumes:
         - name: sysfs

@@ -49,14 +49,3 @@ Selector labels
 app.kubernetes.io/name: {{ include "alumet-relay-client.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "alumet-relay-client.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "alumet-relay-client.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
