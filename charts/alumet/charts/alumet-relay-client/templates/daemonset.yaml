@@ -17,15 +17,14 @@ spec:
         {{ include "alumet-relay-client.labels" . | nindent 8 }}
     spec:
       securityContext:
-        # for RAPL plugin we need to be root 
+        # for RAPL plugin we need to be root
         runAsUser: 0
       tolerations:
         {{ toYaml .Values.tolerations | nindent 8 }}
-
       serviceAccountName: {{ .Release.Name }}-alumet-reader
       automountServiceAccountToken: true
-    {{- if .Values.plugins.relay_client.enable }}
-      # if relay_client plugin is activated, wait starting alumet server 
+      {{- if .Values.plugins.relay_client.enable }}
+      # if relay_client plugin is activated, wait starting alumet server
       initContainers:
         - name: wait-for-alumet-server
           image: busybox:latest
@@ -33,14 +32,13 @@ spec:
           command: [
             'sh',
             '-c',
-            'until nc -vz {{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name) }} {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'                  
+            'until nc -vz {{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name) }} {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
           ]
-    {{- end }}   
-
+      {{- end }}
       containers:
         - name: alumet-relay-client
           image: {{ $global.image.registry }}/alumet-agent:{{ .Values.image.version | default .Chart.AppVersion }}_{{ .Values.image.osVersion }}
-          args: ["--config", "/etc/alumet/alumet-agent.toml"]          
+          args: ["--config", "/etc/alumet/alumet-agent.toml"]
           imagePullPolicy: IfNotPresent
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
@@ -64,25 +62,21 @@ spec:
               value: "{{ .Values.env.RUST_LOG }}"
             - name: RUST_BACKTRACE
               value: "{{ .Values.env.RUST_BACKTRACE }}"
-
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-
       volumes:
         - name: sysfs
           hostPath:
             path: /sys
             type: "Directory"
-        
         - name: config
           configMap:
           {{- if .Values.configMap.name }}
             # a config map is created before deployment
             name: {{ .Values.configMap.name }}
           {{- else }}
-            name: {{ template "alumet-relay-client.fullname" . }}-config            
-          {{- end }}            
-      
+            name: {{ template "alumet-relay-client.fullname" . }}-config
+          {{- end }}
       {{- if $global.secret }}
       imagePullSecrets:
         - name: {{ $global.secret }}
