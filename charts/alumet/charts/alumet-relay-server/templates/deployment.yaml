@@ -76,10 +76,9 @@ spec:
         - name: config
           configMap:
           {{- if .Values.configMap.name }}
-            # a config map is created before deployment
             name: {{ .Values.configMap.name }}
           {{- else }}
-            name: {{ template "alumet-relay-server.fullname" . }}-config            
+            name: {{ template "alumet-relay-server.fullname" . }}-config
           {{- end }}
       {{- if $global.secret }}
       imagePullSecrets:
