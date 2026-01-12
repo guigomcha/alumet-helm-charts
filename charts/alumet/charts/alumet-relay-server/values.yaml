@@ -2,6 +2,9 @@ nameOverride: ''
 fullnameOverride: ''
 
 securityContext:
+  # TODO: wait for new app version to handle uid 1000 correctly.
+  # runAsNonRoot: true
+  # runAsUser: 1000
   capabilities:
     add:
       - SYS_NICE

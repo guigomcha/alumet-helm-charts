@@ -15,3 +15,13 @@ tests:
       - equalRaw:
           value: |
             alumet-relay-server is deployed and running on port 48125
+
+            To verify the deployment:
+              kubectl get pods -n NAMESPACE -l app.kubernetes.io/name=alumet-relay-server
+
+            To check logs:
+              kubectl logs -l app.kubernetes.io/name=alumet-relay-server -n NAMESPACE
+
+            To test connectivity:
+              kubectl port-forward svc/unittest-alumet-relay-server 48125:48125 -n NAMESPACE
+              nc -vz localhost 48125

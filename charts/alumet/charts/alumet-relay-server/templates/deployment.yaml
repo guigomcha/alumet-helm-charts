@@ -29,10 +29,10 @@ spec:
           command: [
             'sh',
             '-c',
-            'until wget -nv -t1 --spider "http://{{ .Release.Name }}-influxdb2:80/health"; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+            'timeout 30s sh -c "until wget -nv -t1 --spider \"http://{{ .Release.Name }}-influxdb2:80/health\"; do echo \"Waiting for influxdb service to be running\"; sleep 2; done;" || { echo \"Timeout while waiting for influxdb\"; exit 1; }'
           ]
+        {{- end }}
       {{- end }}
-    {{- end }}
       containers:
         - name: alumet-relay-server
           image: {{ $global.image.registry }}/alumet-agent:{{ .Values.image.version | default .Chart.AppVersion }}_{{ .Values.image.osVersion }}
@@ -72,6 +72,16 @@ spec:
             {{ end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: relay
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: relay
+            initialDelaySeconds: 10
+            periodSeconds: 5
       volumes:
         - name: config
           configMap:
