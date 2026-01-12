@@ -29,10 +29,11 @@ spec:
         - name: wait-for-alumet-server
           image: busybox:latest
           imagePullPolicy: IfNotPresent
+          {{- $address := (.Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name)) }}
           command: [
             'sh',
             '-c',
-            'until nc -vz {{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name) }} {{ .Values.plugins.relay_client.port }}; do echo "Waiting for alumet-relay-server to be running"; sleep 2; done;'
+            'timeout 30s sh -c "until nc -vz {{ $address }} {{ .Values.plugins.relay_client.port }}; do echo \"Waiting for alumet-relay-server to be running\"; sleep 2; done;" || { echo \"Timeout while waiting for alumet-relay-server\"; exit 1; }'
           ]
       {{- end }}
       containers:
