@@ -36,9 +36,7 @@ Common labels
 {{- define "alumet-relay-server.labels" -}}
 helm.sh/chart: {{ include "alumet-relay-server.chart" . }}
 {{ include "alumet-relay-server.selectorLabels" . }}
-  {{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-  {{- end }}
+app.kubernetes.io/version: {{ .Values.image.version | default (printf "%s-%.f" .Chart.AppVersion .Values.image.revision) | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 

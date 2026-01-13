@@ -3,6 +3,10 @@ suite: test daemonset
 templates:
   - templates/daemonset.yaml
 
+set:
+  image:
+    revision: 1
+
 release:
   name: unittest
 
@@ -36,7 +40,7 @@ tests:
               app.kubernetes.io/instance: unittest
               app.kubernetes.io/managed-by: Helm
               app.kubernetes.io/name: alumet-relay-client
-              app.kubernetes.io/version: 1.2.3
+              app.kubernetes.io/version: 1.2.3-1
               helm.sh/chart: alumet-relay-client-2.6.12
   - it: shouldn't have any toleration by default
     asserts:
@@ -80,4 +84,4 @@ tests:
             name: 123
       - equal:
           path: spec.template.spec.containers[0].image
-          value: registry.com/alumet-agent:1.2.3_ubuntu_24.04
+          value: registry.com/alumet-agent:1.2.3-1_ubuntu_24.04
