@@ -65,6 +65,7 @@ plugins:
     poll_interval: 1s
   nvml:
     enable: false
+    mode: full
   oar:
     enable: false
     version: oar3
