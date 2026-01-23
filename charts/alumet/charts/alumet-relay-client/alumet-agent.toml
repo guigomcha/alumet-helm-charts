@@ -1,9 +1,9 @@
 [plugins.oar]
 enable = {{ .Values.plugins.oar.enable }}
 jobs_only = {{ .Values.plugins.oar.jobs_only }}
-
 oar_version = "{{ .Values.plugins.oar.version }}"
 poll_interval = "1s"
+
 [plugins.aggregation]
 enable = {{ .Values.plugins.aggregation.enable }}
 interval = "1m"
@@ -61,6 +61,7 @@ poll_interval = "{{ .Values.plugins.k8s.poll_interval }}"
 k8s_api_url = "https://kubernetes.default.svc:443"
 k8s_node = "${NODE_NAME}"
 token_retrieval = "file"
+annotate_foreign_measurements = false
 
 [plugins.nvml]
 enable = {{ .Values.plugins.nvml.enable }}
@@ -96,6 +97,10 @@ metrics = [
     "Mapped",
 ]
 
+[plugins.procfs.network]
+enabled = true
+poll_interval = "5s"
+
 [plugins.procfs.processes]
 refresh_interval = "2s"
 strategy = "watcher"
@@ -117,8 +122,8 @@ no_perf_events = false
 
 [plugins.relay-client]
 enable = {{ .Values.plugins.relay_client.enable }}
-relay_server = '{{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name ) }}:{{ .Values.plugins.relay_client.port }}'
 buffer_max_length = {{ .Values.plugins.relay_client.buffer_max_length }}
+relay_server = '{{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name ) }}:{{ .Values.plugins.relay_client.port }}'
 client_name = "${NODE_NAME}"
 buffer_timeout = "{{ .Values.plugins.relay_client.buffer_timeout }}"
 
