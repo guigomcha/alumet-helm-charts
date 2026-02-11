@@ -43,7 +43,6 @@ host = "0.0.0.0"
 prefix = ""
 suffix = "_alumet"
 port = {{ .Values.plugins.prometheusExporter.port }}
-use_unit_display_name = true
 add_attributes_to_labels = true
 
 [plugins.relay-server]
