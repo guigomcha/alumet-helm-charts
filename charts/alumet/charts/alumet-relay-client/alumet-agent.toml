@@ -1,8 +1,8 @@
 [plugins.oar]
 enable = {{ .Values.plugins.oar.enable }}
+jobs_only = {{ .Values.plugins.oar.jobs_only }}
 oar_version = "{{ .Values.plugins.oar.version }}"
 poll_interval = "1s"
-jobs_only = {{ .Values.plugins.oar.jobs_only }}
 
 [plugins.aggregation]
 enable = {{ .Values.plugins.aggregation.enable }}
@@ -17,17 +17,18 @@ force_flush = true
 append_unit_to_metric_name = true
 use_unit_display_name = true
 csv_delimiter = ";"
+csv_late_delimiter = ","
 
 [plugins.energy-attribution]
 enable = {{ .Values.plugins.energyAttribution.enable }}
 
-[plugins.energy-attribution.formulas.attributed_energy]
+[plugins.energy-attribution.formulas.attributed_energy_cpu]
 # the expression used to compute the final value
 expr = "cpu_energy * cpu_usage / 100.0"
 ref = "cpu_energy"
 
 # Timeseries related to the resources.
-[plugins.energy-attribution.formulas.attributed_energy.per_resource]
+[plugins.energy-attribution.formulas.attributed_energy_cpu.per_resource]
 # Defines the timeseries `cpu_energy` that is used in the formula, as the measurement points that have:
 # - the metric `rapl_consumed_energy`,
 # - and the resource kind `"local_machine"`
@@ -35,7 +36,7 @@ ref = "cpu_energy"
 cpu_energy = { metric = "rapl_consumed_energy", resource_kind = "local_machine", domain = "package_total" }
 
 # Timeseries related to the resource consumers.
-[plugins.energy-attribution.formulas.attributed_energy.per_consumer]
+[plugins.energy-attribution.formulas.attributed_energy_cpu.per_consumer]
 # Defines the timeseries `cpu_usage` that is used in the formula, as the measurements points that have:
 # - the metric `cpu_usage_percent`
 # - the attribute `kind` equal to `total`
@@ -43,10 +44,10 @@ cpu_usage = { metric = "cpu_percent", kind = "total" }
 
 [plugins.energy-estimation-tdp]
 enable = {{ .Values.plugins.EnergyEstimationTdp.enable }}
-poll_interval = "{{ .Values.plugins.EnergyEstimationTdp.poll_interval }}"
 tdp = {{ .Values.plugins.EnergyEstimationTdp.tdp }}
 nb_vcpu = {{ .Values.plugins.EnergyEstimationTdp.nb_vcpu }}
 nb_cpu = {{ .Values.plugins.EnergyEstimationTdp.nb_cpu }}
+poll_interval = "{{ .Values.plugins.EnergyEstimationTdp.poll_interval }}"
 cpu_usage_per_pod = "{{ .Values.plugins.EnergyEstimationTdp.cpu_usage_per_pod }}"
 
 [plugins.jetson]
@@ -60,21 +61,20 @@ poll_interval = "{{ .Values.plugins.k8s.poll_interval }}"
 k8s_api_url = "https://kubernetes.default.svc:443"
 k8s_node = "${NODE_NAME}"
 token_retrieval = "file"
+annotate_foreign_measurements = false
 
 [plugins.nvml]
 enable = {{ .Values.plugins.nvml.enable }}
 poll_interval = "1s"
 flush_interval = "5s"
+skip_failed_devices = true
+mode = "{{ .Values.plugins.nvml.mode }}"
 
 [plugins.perf]
 enable = {{ .Values.plugins.perf.enable }}
 poll_interval = "1s"
 flush_interval = "5s"
-hardware_events = [
-    "REF_CPU_CYCLES",
-    "CACHE_MISSES",
-    "BRANCH_MISSES",
-]
+hardware_events = ["REF_CPU_CYCLES", "CACHE_MISSES", "BRANCH_MISSES"]
 software_events = []
 cache_events = ["LL_READ_MISS"]
 
@@ -97,6 +97,10 @@ metrics = [
     "Mapped",
 ]
 
+[plugins.procfs.network]
+enabled = true
+poll_interval = "5s"
+
 [plugins.procfs.processes]
 refresh_interval = "2s"
 strategy = "watcher"
@@ -118,9 +122,9 @@ no_perf_events = false
 
 [plugins.relay-client]
 enable = {{ .Values.plugins.relay_client.enable }}
-client_name = "${NODE_NAME}"
-relay_server = "{{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name ) }}:{{ .Values.plugins.relay_client.port }}"
 buffer_max_length = {{ .Values.plugins.relay_client.buffer_max_length }}
+relay_server = '{{ .Values.plugins.relay_client.relay_server | default (printf "%s-alumet-relay-server" .Release.Name ) }}:{{ .Values.plugins.relay_client.port }}'
+client_name = "${NODE_NAME}"
 buffer_timeout = "{{ .Values.plugins.relay_client.buffer_timeout }}"
 
 [plugins.relay-client.retry]
@@ -134,8 +138,8 @@ socket_path = "alumet-control.sock"
 
 [plugins.opentelemetry]
 enable = {{ .Values.plugins.opentelemetry.enable }}
-collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
 push_interval_seconds = {{ .Values.plugins.opentelemetry.push_interval_seconds }}
+collector_host = "{{ .Values.plugins.opentelemetry.collector_host }}"
 prefix = ""
 suffix = "_alumet"
 use_unit_display_name = true
@@ -143,9 +147,9 @@ add_attributes_to_labels = true
 
 [plugins.prometheus-exporter]
 enable = {{ .Values.plugins.prometheusExporter.enable }}
+port = {{ .Values.plugins.prometheusExporter.port }}
 host = "0.0.0.0"
 prefix = ""
 suffix = "_alumet"
-port = {{ .Values.plugins.prometheusExporter.port }}
 use_unit_display_name = true
 add_attributes_to_labels = true

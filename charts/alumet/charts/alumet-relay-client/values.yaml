@@ -24,7 +24,7 @@ image:
   # Override appVersion and use different image version of ALUMET.
   # version: 0.8.3-1
   # Operating System deployed (debian_12, ubuntu_24.04, fc42, ubi9.5, ubi8.3)
-  revision: 1
+  revision: 2
   osVersion: ubuntu_24.04
   registry:
 
@@ -65,6 +65,7 @@ plugins:
     poll_interval: 1s
   nvml:
     enable: false
+    mode: full
   oar:
     enable: false
     version: oar3
