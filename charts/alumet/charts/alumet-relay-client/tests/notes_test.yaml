@@ -18,6 +18,16 @@ tests:
       - equalRaw:
           value: |
             Installing alumet-relay-client
-            Your installed version  1.0.0
-            Your instance name is:  unittest
+            Your installed version: 1.0.0
+            Your instance name is: unittest
             alumet-relay client is deployed
+
+            To verify the deployment:
+              kubectl get pods -n NAMESPACE -l app.kubernetes.io/name=alumet-relay-client
+
+            To check logs:
+              kubectl logs -l app.kubernetes.io/name=alumet-relay-client -n NAMESPACE
+            If you encounter connection issues with the relay server, please verify:
+            1. The relay server is running
+            2. Network connectivity between nodes and the relay server
+            3. Firewall rules allowing connections on port 50051

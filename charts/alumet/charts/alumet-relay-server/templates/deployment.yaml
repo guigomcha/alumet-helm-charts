@@ -29,19 +29,17 @@ spec:
           command: [
             'sh',
             '-c',
-            'until wget -nv -t1 --spider "http://{{ .Release.Name }}-influxdb2:80/health"; do echo "Waiting for influxdb service to be running"; sleep 2; done;'
+            'timeout 30s sh -c "until wget -nv -t1 --spider \"http://{{ .Release.Name }}-influxdb2:80/health\"; do echo \"Waiting for influxdb service to be running\"; sleep 2; done;" || { echo \"Timeout while waiting for influxdb\"; exit 1; }'
           ]
+        {{- end }}
       {{- end }}
-    {{- end }}
       containers:
         - name: alumet-relay-server
-          image: {{ $global.image.registry }}/alumet-agent:{{ .Values.image.version | default .Chart.AppVersion }}_{{ .Values.image.osVersion }}
+          image: {{ $global.image.registry }}/alumet-agent:{{ .Values.image.version | default (printf "%s-%.f_%s" .Chart.AppVersion .Values.image.revision .Values.image.osVersion) }}
           args: ["--config", "/etc/alumet/alumet-agent.toml"]
           imagePullPolicy: IfNotPresent
           resources:
-            limits:
-              memory: "{{ .Values.resources.memory }}"
-              cpu: "{{ .Values.resources.cpu }}"
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: config
               mountPath: /etc/alumet/alumet-agent.toml
@@ -73,26 +71,30 @@ spec:
               name: "exporter"
             {{ end }}
           securityContext:
-            capabilities:
-              add: [{{ .Values.securityContext.capabilities }}]
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          livenessProbe:
+            tcpSocket:
+              port: relay
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: relay
+            initialDelaySeconds: 10
+            periodSeconds: 5
       volumes:
         - name: config
           configMap:
           {{- if .Values.configMap.name }}
-            # a config map is created before deployment
             name: {{ .Values.configMap.name }}
           {{- else }}
-            name: {{ template "alumet-relay-server.fullname" . }}-config            
+            name: {{ template "alumet-relay-server.fullname" . }}-config
           {{- end }}
       {{- if $global.secret }}
       imagePullSecrets:
         - name: {{ $global.secret }}
       {{- end }}
       tolerations:
-      {{- with .Values.tolerations }}
-        {{ toYaml . | nindent 8 | trim }}
-      {{- end }}
-      {{- if .Values.nodeSelector.nodeLabelValue }} 
+        {{ toYaml .Values.tolerations | nindent 8 }}
       nodeSelector:
-        {{ .Values.nodeSelector.nodeLabelName }}: {{ .Values.nodeSelector.nodeLabelValue }}
-      {{- end }}
+        {{- toYaml .Values.nodeSelector | nindent 8 }}

@@ -1,4 +1,17 @@
 Installing {{ .Chart.Name }}
-Your installed version  {{ .Chart.Version }}
-Your instance name is:  {{ .Release.Name }}
+Your installed version: {{ .Chart.Version }}
+Your instance name is: {{ .Release.Name }}
 alumet-relay client is deployed
+
+To verify the deployment:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "alumet-relay-client.name" . }}
+
+To check logs:
+  kubectl logs -l app.kubernetes.io/name={{ include "alumet-relay-client.name" . }} -n {{ .Release.Namespace }}
+
+{{- if .Values.plugins.relay_client.enable }}
+If you encounter connection issues with the relay server, please verify:
+1. The relay server is running
+2. Network connectivity between nodes and the relay server
+3. Firewall rules allowing connections on port {{ .Values.plugins.relay_client.port }}
+{{- end }}

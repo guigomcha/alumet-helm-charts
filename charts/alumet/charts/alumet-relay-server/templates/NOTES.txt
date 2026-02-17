@@ -1,1 +1,11 @@
 alumet-relay-server is deployed and running on port {{ .Values.service.port }}
+
+To verify the deployment:
+  kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/name={{ include "alumet-relay-server.name" . }}
+
+To check logs:
+  kubectl logs -l app.kubernetes.io/name={{ include "alumet-relay-server.name" . }} -n {{ .Release.Namespace }}
+
+To test connectivity:
+  kubectl port-forward svc/{{ template "alumet-relay-server.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+  nc -vz localhost {{ .Values.service.port }}

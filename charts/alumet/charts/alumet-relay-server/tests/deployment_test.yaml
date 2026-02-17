@@ -7,6 +7,8 @@ set:
   global:
     image:
       registry:
+  image:
+    revision: 1
 
 chart:
   appVersion: 1.2.3
@@ -74,4 +76,4 @@ tests:
             name: 123
       - equal:
           path: spec.template.spec.containers[0].image
-          value: registry.com/alumet-agent:1.2.3_ubuntu_24.04
+          value: registry.com/alumet-agent:1.2.3-1_ubuntu_24.04
